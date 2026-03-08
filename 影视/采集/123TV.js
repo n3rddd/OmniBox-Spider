@@ -31,6 +31,31 @@ const logError = (message, error) => {
     OmniBox.log("error", `[123TV-DEBUG] ${message}: ${error.message || error}`);
 };
 
+const encodeMeta = (obj) => {
+    try {
+        return Buffer.from(JSON.stringify(obj || {}), 'utf8').toString('base64');
+    } catch (_) {
+        return '';
+    }
+};
+
+const decodeMeta = (str) => {
+    try {
+        return JSON.parse(Buffer.from(str || '', 'base64').toString('utf8'));
+    } catch (_) {
+        return null;
+    }
+};
+
+const buildScrapedEpisodeName = (scrapeData, mapping, originalName) => {
+    if (!scrapeData || !mapping || !originalName) return originalName;
+    const hit = mapping[originalName];
+    if (!hit) return originalName;
+    if (typeof hit === 'string') return hit;
+    if (hit.title) return hit.title;
+    return originalName;
+};
+
 /**
  * 图像地址修复
  */
@@ -44,7 +69,7 @@ const fixPicUrl = (url) => {
  * 核心:解析 CMS 字符串为结构化播放源 [1]
  * T3格式转T4格式的关键函数
  */
-const parsePlaySources = (fromStr, urlStr) => {
+const parsePlaySources = (fromStr, urlStr, videoId = '', vodName = '') => {
     logInfo("开始解析播放源字符串", { from: fromStr, url: urlStr });
     const playSources = [];
     if (!fromStr || !urlStr) return playSources;
@@ -56,11 +81,19 @@ const parsePlaySources = (fromStr, urlStr) => {
         const sourceName = froms[i] || `线路${i + 1}`;
         const sourceItems = urls[i] ? urls[i].split('#') : [];
 
-        const episodes = sourceItems.map(item => {
+        const episodes = sourceItems.map((item, episodeIndex) => {
             const parts = item.split('$');
+            const episodeName = parts[0] || '正片';
+            const rawPlayId = parts[1] || parts[0];
+            const playMeta = {
+                sid: videoId,
+                fid: episodeName,
+                v: vodName,
+                e: episodeIndex + 1
+            };
             return {
-                name: parts[0] || '正片',
-                playId: parts[1] || parts[0]
+                name: episodeName,
+                playId: `${rawPlayId}|||${encodeMeta(playMeta)}`
             };
         }).filter(e => e.playId);
 
@@ -305,12 +338,79 @@ async function detail(params) {
                 const vodPlayUrl = playUrlArr.join('$$$');
                 
                 // 转换为T4格式 [1]
-                vod.vod_play_sources = parsePlaySources(vodPlayFrom, vodPlayUrl);
+                vod.vod_play_sources = parsePlaySources(vodPlayFrom, vodPlayUrl, videoId, vod.vod_name);
                 
                 logInfo("播放源解析完成", { 
                     fromCount: playFromArr.length, 
                     sources: vod.vod_play_sources.length 
                 });
+
+                const scrapeCandidates = [];
+                for (const source of vod.vod_play_sources || []) {
+                    for (const episode of source.episodes || []) {
+                        if (!episode || !episode.name) continue;
+                        scrapeCandidates.push({
+                            fileName: episode.name,
+                            fileId: episode.playId
+                        });
+                    }
+                }
+
+                if (scrapeCandidates.length > 0 && vod.vod_name) {
+                    const sourceId = `spider_source_${await OmniBox.getSourceId()}_${videoId}`;
+                    const scrapingResult = await OmniBox.processScraping(
+                        sourceId,
+                        vod.vod_name,
+                        vod.vod_name,
+                        scrapeCandidates
+                    );
+                    logInfo(`刮削处理完成,结果: ${JSON.stringify(scrapingResult).substring(0, 200)}`);
+
+                    const metadata = await OmniBox.getScrapeMetadata(sourceId);
+                    const scrapeData = metadata && metadata.data;
+
+                    if (scrapeData) {
+                        vod.vod_name = scrapeData.name || vod.vod_name;
+                        vod.vod_pic = scrapeData.poster_path || vod.vod_pic;
+                        vod.vod_year = scrapeData.release_date || vod.vod_year;
+                        vod.vod_content = scrapeData.overview || vod.vod_content;
+                        vod.vod_actor = scrapeData.actors || vod.vod_actor;
+                        vod.vod_director = scrapeData.director || vod.vod_director;
+
+                        const mappings = scrapeData.mappings || {};
+                        vod.vod_play_sources = (vod.vod_play_sources || []).map((source) => {
+                            const episodes = (source.episodes || []).map((ep) => {
+                                const oldName = ep.name || '';
+                                const newName = buildScrapedEpisodeName(scrapeData, mappings, oldName);
+                                if (oldName !== newName) {
+                                    logInfo(`应用刮削后源文件名: ${oldName} -> ${newName}`);
+                                }
+                                const mapInfo = mappings[oldName] || {};
+                                const sortSeason = parseInt(mapInfo.seasonNumber, 10) || 0;
+                                const sortEpisode = parseInt(mapInfo.episodeNumber, 10) || 0;
+                                return {
+                                    ...ep,
+                                    name: newName,
+                                    _sortSeason: sortSeason,
+                                    _sortEpisode: sortEpisode
+                                };
+                            }).sort((a, b) => {
+                                if ((a._sortSeason || 0) !== (b._sortSeason || 0)) {
+                                    return (a._sortSeason || 0) - (b._sortSeason || 0);
+                                }
+                                return (a._sortEpisode || 0) - (b._sortEpisode || 0);
+                            }).map((ep) => ({
+                                name: ep.name,
+                                playId: ep.playId
+                            }));
+
+                            return {
+                                ...source,
+                                episodes
+                            };
+                        });
+                    }
+                }
             } catch (e) {
                 logError("解析播放源数据失败", e);
             }
@@ -327,12 +427,26 @@ async function detail(params) {
  * 播放接口 [2]
  */
 async function play(params) {
-    const playId = params.playId;
+    const rawInputPlayId = params.playId || '';
+    const [rawPlayId, encodedMeta] = String(rawInputPlayId).split('|||');
+    const meta = decodeMeta(encodedMeta || '') || {};
+    const playId = rawPlayId || rawInputPlayId;
     const url = `${host}${playId}`;
+    const vodId = params.vodId || meta.sid || '';
     
     logInfo(`准备播放: ${playId}, URL: ${url}`);
     
     try {
+        if (vodId) {
+            const sourceId = `spider_source_${await OmniBox.getSourceId()}_${vodId}`;
+            const metadata = await OmniBox.getScrapeMetadata(sourceId);
+            logInfo('播放阶段读取刮削元数据', {
+                vodId,
+                hit: !!(metadata && metadata.data),
+                episode: meta.fid || ''
+            });
+        }
+
         const res = await axiosInstance.get(url, { headers: def_headers });
         const html = res.data;
         

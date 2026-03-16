@@ -1,5 +1,10 @@
 // @name 123TV
-// @version 1.0.1
+// @author 
+// @description 刮削：支持，弹幕：支持，嗅探：支持
+// @dependencies: axios
+// @version 1.0.2
+// @downloadURL https://gh-proxy.org/https://github.com/Silent1566/OmniBox-Spider/raw/refs/heads/main/影视/采集/123TV.js
+
 /**
  * ============================================================================
  * 123TV
@@ -284,57 +289,81 @@ const parsePlaySources = (fromStr, urlStr, videoId = '', vodName = '') => {
  */
 async function home(params) {
     logInfo("进入首页");
-    return {
-        class: [
-            { 'type_id': '10', 'type_name': '电影' },
-            { 'type_id': '11', 'type_name': '连续剧' },
-            { 'type_id': '12', 'type_name': '综艺' },
-            { 'type_id': '13', 'type_name': '动漫' },
-            // { 'type_id': '15', 'type_name': '福利' }
-        ],
-        filters: {
-            '10': [{
-                "key": "class", "name": "类型", "value": [
-                    { "name": "全部", "value": "" }, { "name": "动作片", "value": "1001" }, { "name": "喜剧片", "value": "1002" },
-                    { "name": "爱情片", "value": "1003" }, { "name": "科幻片", "value": "1004" }, { "name": "恐怖片", "value": "1005" },
-                    { "name": "剧情片", "value": "1006" }, { "name": "战争片", "value": "1007" }, { "name": "纪录片", "value": "1008" },
-                    { "name": "动漫电影", "value": "1010" }, { "name": "奇幻片", "value": "1011" }, { "name": "动画片", "value": "1013" },
-                    { "name": "犯罪片", "value": "1014" }, { "name": "悬疑片", "value": "1016" }, { "name": "邵氏电影", "value": "1019" },
-                    { "name": "歌舞片", "value": "1022" }, { "name": "家庭片", "value": "1024" }, { "name": "古装片", "value": "1025" },
-                    { "name": "历史片", "value": "1026" }, { "name": "4K电影", "value": "1027" }
-                ]
-            }],
-            '11': [{
-                "key": "class", "name": "地区", "value": [
-                    { "name": "全部", "value": "" }, { "name": "国产剧", "value": "1101" }, { "name": "香港剧", "value": "1102" },
-                    { "name": "台湾剧", "value": "1105" }, { "name": "韩国剧", "value": "1103" }, { "name": "欧美剧", "value": "1104" },
-                    { "name": "日本剧", "value": "1106" }, { "name": "泰国剧", "value": "1108" }, { "name": "港台剧", "value": "1110" },
-                    { "name": "日韩剧", "value": "1111" }, { "name": "海外剧", "value": "1107" }
-                ]
-            }],
-            '12': [{
-                "key": "class", "name": "类型", "value": [
-                    { "name": "全部", "value": "" }, { "name": "内地综艺", "value": "1201" }, { "name": "港台综艺", "value": "1202" },
-                    { "name": "日韩综艺", "value": "1203" }, { "name": "欧美综艺", "value": "1204" }, { "name": "国外综艺", "value": "1205" }
-                ]
-            }],
-            '13': [{
-                "key": "class", "name": "类型", "value": [
-                    { "name": "全部", "value": "" }, { "name": "国产动漫", "value": "1301" }, { "name": "日韩动漫", "value": "1302" },
-                    { "name": "欧美动漫", "value": "1303" }, { "name": "海外动漫", "value": "1305" }, { "name": "里番", "value": "1307" }
-                ]
-            }],
-            '15': [{
-                "key": "class", "name": "分类", "value": [
-                    { "name": "全部", "value": "" }, { "name": "韩国情色片", "value": "1551" }, { "name": "日本情色片", "value": "1552" },
-                    { "name": "大陆情色片", "value": "1555" }, { "name": "香港情色片", "value": "1553" }, { "name": "台湾情色片", "value": "1554" },
-                    { "name": "美国情色片", "value": "1556" }, { "name": "欧洲情色片", "value": "1557" }, { "name": "印度情色片", "value": "1558" },
-                    { "name": "东南亚情色片", "value": "1559" }, { "name": "其它情色片", "value": "1550" }
-                ]
-            }]
-        },
-        list: []
-    };
+
+    try {
+        const res = await axiosInstance.get(host, { headers: def_headers });
+        const html = res.data;
+
+        // 解析视频列表
+        const regex = /<a class="w4-item" href="([^"]+)".*?<img.*?data-src="([^"]+)".*?<div class="s">.*?<span>([^<]+)<\/span>.*?<div class="t"[^>]*title="([^"]+)">.*?<div class="i">([^<]+)<\/div>/gs;
+        const videos = [];
+        let match;
+
+        while ((match = regex.exec(html)) !== null) {
+            videos.push({
+                vod_id: match[1],
+                vod_name: match[4].trim(),
+                vod_pic: fixPicUrl(match[2]),
+                vod_remarks: match[3].trim()
+            });
+        }
+
+        return {
+            list: videos,
+
+            class: [
+                { 'type_id': '10', 'type_name': '电影' },
+                { 'type_id': '11', 'type_name': '连续剧' },
+                { 'type_id': '12', 'type_name': '综艺' },
+                { 'type_id': '13', 'type_name': '动漫' },
+                // { 'type_id': '15', 'type_name': '福利' }
+            ],
+            filters: {
+                '10': [{
+                    "key": "class", "name": "类型", "value": [
+                        { "name": "全部", "value": "" }, { "name": "动作片", "value": "1001" }, { "name": "喜剧片", "value": "1002" },
+                        { "name": "爱情片", "value": "1003" }, { "name": "科幻片", "value": "1004" }, { "name": "恐怖片", "value": "1005" },
+                        { "name": "剧情片", "value": "1006" }, { "name": "战争片", "value": "1007" }, { "name": "纪录片", "value": "1008" },
+                        { "name": "动漫电影", "value": "1010" }, { "name": "奇幻片", "value": "1011" }, { "name": "动画片", "value": "1013" },
+                        { "name": "犯罪片", "value": "1014" }, { "name": "悬疑片", "value": "1016" }, { "name": "邵氏电影", "value": "1019" },
+                        { "name": "歌舞片", "value": "1022" }, { "name": "家庭片", "value": "1024" }, { "name": "古装片", "value": "1025" },
+                        { "name": "历史片", "value": "1026" }, { "name": "4K电影", "value": "1027" }
+                    ]
+                }],
+                '11': [{
+                    "key": "class", "name": "地区", "value": [
+                        { "name": "全部", "value": "" }, { "name": "国产剧", "value": "1101" }, { "name": "香港剧", "value": "1102" },
+                        { "name": "台湾剧", "value": "1105" }, { "name": "韩国剧", "value": "1103" }, { "name": "欧美剧", "value": "1104" },
+                        { "name": "日本剧", "value": "1106" }, { "name": "泰国剧", "value": "1108" }, { "name": "港台剧", "value": "1110" },
+                        { "name": "日韩剧", "value": "1111" }, { "name": "海外剧", "value": "1107" }
+                    ]
+                }],
+                '12': [{
+                    "key": "class", "name": "类型", "value": [
+                        { "name": "全部", "value": "" }, { "name": "内地综艺", "value": "1201" }, { "name": "港台综艺", "value": "1202" },
+                        { "name": "日韩综艺", "value": "1203" }, { "name": "欧美综艺", "value": "1204" }, { "name": "国外综艺", "value": "1205" }
+                    ]
+                }],
+                '13': [{
+                    "key": "class", "name": "类型", "value": [
+                        { "name": "全部", "value": "" }, { "name": "国产动漫", "value": "1301" }, { "name": "日韩动漫", "value": "1302" },
+                        { "name": "欧美动漫", "value": "1303" }, { "name": "海外动漫", "value": "1305" }, { "name": "里番", "value": "1307" }
+                    ]
+                }],
+                '15': [{
+                    "key": "class", "name": "分类", "value": [
+                        { "name": "全部", "value": "" }, { "name": "韩国情色片", "value": "1551" }, { "name": "日本情色片", "value": "1552" },
+                        { "name": "大陆情色片", "value": "1555" }, { "name": "香港情色片", "value": "1553" }, { "name": "台湾情色片", "value": "1554" },
+                        { "name": "美国情色片", "value": "1556" }, { "name": "欧洲情色片", "value": "1557" }, { "name": "印度情色片", "value": "1558" },
+                        { "name": "东南亚情色片", "value": "1559" }, { "name": "其它情色片", "value": "1550" }
+                    ]
+                }]
+            }
+        };
+    } catch (e) {
+        logError("分类请求失败", e);
+        return { list: [], page: pg, pagecount: 0 };
+    }
 }
 
 /**
@@ -444,7 +473,7 @@ async function search(params) {
  * 详情接口 [1][2]
  * 关键：将T3的vod_play_from/vod_play_url转换为T4的vod_play_sources
  */
-async function detail(params) {
+async function detail(params, context) {
     const videoId = params.videoId;
     const url = videoId.startsWith('http') ? videoId : `${host}${videoId}`;
 
@@ -538,15 +567,16 @@ async function detail(params) {
                 }
 
                 if (scrapeCandidates.length > 0 && vod.vod_name) {
+                    const sourceId = `spider_source_${context.sourceId}_${videoId}`;
                     const scrapingResult = await OmniBox.processScraping(
-                        videoId,
+                        sourceId,
                         vod.vod_name,
                         vod.vod_name,
                         scrapeCandidates
                     );
                     logInfo(`刮削处理完成,结果: ${JSON.stringify(scrapingResult).substring(0, 200)}`);
 
-                    const metadata = await OmniBox.getScrapeMetadata(videoId);
+                    const metadata = await OmniBox.getScrapeMetadata(sourceId);
                     const scrapeData = metadata && metadata.data;
 
                     if (scrapeData) {
@@ -606,7 +636,7 @@ async function detail(params) {
 /**
  * 播放接口 [2]
  */
-async function play(params) {
+async function play(params, context) {
     const rawInputPlayId = params.playId || '';
     const [rawPlayId, encodedMeta] = String(rawInputPlayId).split('|||');
     const meta = decodeMeta(encodedMeta || '') || {};
@@ -622,7 +652,8 @@ async function play(params) {
 
     try {
         if (vodId) {
-            const metadata = await OmniBox.getScrapeMetadata(vodId);
+            const sourceId = `spider_source_${context.sourceId}_${vodId}`;
+            const metadata = await OmniBox.getScrapeMetadata(sourceId);
             logInfo('播放阶段读取刮削元数据', {
                 vodId,
                 hit: !!(metadata && metadata.data),
@@ -653,26 +684,30 @@ async function play(params) {
             const playUrl = match[1];
             logInfo(`解析到播放地址: ${playUrl}`);
 
-            const response = {
-                urls: [{ name: '默认', url: playUrl }],
-                parse: 0,
-                header: def_headers
-            };
+            // 检查是否是直接播放链接
+            if (playUrl.match(/\.(m3u8|mp4|flv|avi|mkv|ts)/i)) {
+                const response = {
+                    urls: [{ name: '默认', url: playUrl }],
+                    parse: 0,
+                    header: def_headers
+                };
 
-            if (DANMU_API && (vodName || meta.v)) {
-                const fallbackVodName = meta.v || vodName;
-                const fileName = scrapedDanmuFileName || buildFileNameForDanmu(fallbackVodName, episodeName);
-                logInfo(`尝试匹配弹幕文件名: ${fileName}`);
-                if (fileName) {
-                    const danmakuList = await matchDanmu(fileName);
-                    if (danmakuList && danmakuList.length > 0) {
-                        response.danmaku = danmakuList;
-                        logInfo('弹幕已添加到播放响应');
+                if (DANMU_API && (vodName || meta.v)) {
+                    const fallbackVodName = meta.v || vodName;
+                    const fileName = scrapedDanmuFileName || buildFileNameForDanmu(fallbackVodName, episodeName);
+                    logInfo(`尝试匹配弹幕文件名: ${fileName}`);
+                    if (fileName) {
+                        const danmakuList = await matchDanmu(fileName);
+                        if (danmakuList && danmakuList.length > 0) {
+                            response.danmaku = danmakuList;
+                            logInfo('弹幕已添加到播放响应');
+                        }
                     }
                 }
-            }
 
-            return response;
+                return response;
+
+            }
         }
 
         const sniffResult = await sniff123tvPlay(url);

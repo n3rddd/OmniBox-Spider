@@ -2,7 +2,7 @@
 // @author W.Q, @wujiwanmei, @lucky_TJQ, tcxp, @shortai
 // @description 刮削：支持，弹幕：支持，嗅探：支持
 // @dependencies: axios, crypto
-// @version 1.0.1
+// @version 1.0.2
 // @downloadURL https://gh-proxy.org/https://github.com/Silent1566/OmniBox-Spider/raw/refs/heads/main/影视/采集/3Q影视.js
 
 /**
@@ -101,7 +101,7 @@ const decodeMeta = (str) => {
 const generateYears = (typeName) => {
     const currentYear = new Date().getFullYear();
     const years = [{ "name": "全部", "value": "" }];
-    
+
     if (typeName === '电影') {
         // 电影：当前年份到2016年，然后是年代区间
         for (let y = currentYear; y >= 2016; y--) {
@@ -125,7 +125,7 @@ const generateYears = (typeName) => {
         }
         years.push({ "name": "更早", "value": "更早" });
     }
-    
+
     return years;
 };
 
@@ -135,95 +135,95 @@ const generateYears = (typeName) => {
  */
 const filterData = {
     "电影": [
-        { 
-            "key": "class", 
-            "name": "类型", 
+        {
+            "key": "class",
+            "name": "类型",
             "value": [
-                { "name": "全部", "value": "" }, 
-                ...["动作","喜剧","爱情","科幻","恐怖","悬疑","犯罪","战争","动画","冒险","历史","灾难","纪录","剧情"].map(i => ({ "name": i, "value": i }))
-            ] 
+                { "name": "全部", "value": "" },
+                ...["动作", "喜剧", "爱情", "科幻", "恐怖", "悬疑", "犯罪", "战争", "动画", "冒险", "历史", "灾难", "纪录", "剧情"].map(i => ({ "name": i, "value": i }))
+            ]
         },
-        { 
-            "key": "area", 
-            "name": "地区", 
+        {
+            "key": "area",
+            "name": "地区",
             "value": [
-                { "name": "全部", "value": "" }, 
-                ...["大陆","香港","台湾","美国","日本","韩国","泰国","印度","英国","法国","德国","加拿大","西班牙","意大利","澳大利亚"].map(i => ({ "name": i, "value": i }))
-            ] 
+                { "name": "全部", "value": "" },
+                ...["大陆", "香港", "台湾", "美国", "日本", "韩国", "泰国", "印度", "英国", "法国", "德国", "加拿大", "西班牙", "意大利", "澳大利亚"].map(i => ({ "name": i, "value": i }))
+            ]
         },
-        { 
-            "key": "year", 
-            "name": "年份", 
-            "value": generateYears('电影') 
+        {
+            "key": "year",
+            "name": "年份",
+            "value": generateYears('电影')
         }
     ],
     "剧集": [
-        { 
-            "key": "class", 
-            "name": "类型", 
+        {
+            "key": "class",
+            "name": "类型",
             "value": [
-                { "name": "全部", "value": "" }, 
-                ...["爱情","古装","武侠","历史","家庭","喜剧","悬疑","犯罪","战争","奇幻","科幻","恐怖"].map(i => ({ "name": i, "value": i }))
-            ] 
+                { "name": "全部", "value": "" },
+                ...["爱情", "古装", "武侠", "历史", "家庭", "喜剧", "悬疑", "犯罪", "战争", "奇幻", "科幻", "恐怖"].map(i => ({ "name": i, "value": i }))
+            ]
         },
-        { 
-            "key": "area", 
-            "name": "地区", 
+        {
+            "key": "area",
+            "name": "地区",
             "value": [
-                { "name": "全部", "value": "" }, 
-                ...["大陆","香港","台湾","美国","日本","韩国","泰国","英国"].map(i => ({ "name": i, "value": i }))
-            ] 
+                { "name": "全部", "value": "" },
+                ...["大陆", "香港", "台湾", "美国", "日本", "韩国", "泰国", "英国"].map(i => ({ "name": i, "value": i }))
+            ]
         },
-        { 
-            "key": "year", 
-            "name": "年份", 
-            "value": generateYears('剧集') 
+        {
+            "key": "year",
+            "name": "年份",
+            "value": generateYears('剧集')
         }
     ],
     "动漫": [
-        { 
-            "key": "class", 
-            "name": "类型", 
+        {
+            "key": "class",
+            "name": "类型",
             "value": [
-                { "name": "全部", "value": "" }, 
-                ...["冒险","奇幻","科幻","武侠","悬疑"].map(i => ({ "name": i, "value": i }))
-            ] 
+                { "name": "全部", "value": "" },
+                ...["冒险", "奇幻", "科幻", "武侠", "悬疑"].map(i => ({ "name": i, "value": i }))
+            ]
         },
-        { 
-            "key": "area", 
-            "name": "地区", 
+        {
+            "key": "area",
+            "name": "地区",
             "value": [
-                { "name": "全部", "value": "" }, 
-                ...["大陆","日本","欧美"].map(i => ({ "name": i, "value": i }))
-            ] 
+                { "name": "全部", "value": "" },
+                ...["大陆", "日本", "欧美"].map(i => ({ "name": i, "value": i }))
+            ]
         },
-        { 
-            "key": "year", 
-            "name": "年份", 
-            "value": generateYears('动漫') 
+        {
+            "key": "year",
+            "name": "年份",
+            "value": generateYears('动漫')
         }
     ],
     "综艺": [
-        { 
-            "key": "class", 
-            "name": "类型", 
+        {
+            "key": "class",
+            "name": "类型",
             "value": [
-                { "name": "全部", "value": "" }, 
-                ...["真人秀","音乐","脱口秀","歌舞","爱情"].map(i => ({ "name": i, "value": i }))
-            ] 
+                { "name": "全部", "value": "" },
+                ...["真人秀", "音乐", "脱口秀", "歌舞", "爱情"].map(i => ({ "name": i, "value": i }))
+            ]
         },
-        { 
-            "key": "area", 
-            "name": "地区", 
+        {
+            "key": "area",
+            "name": "地区",
             "value": [
-                { "name": "全部", "value": "" }, 
-                ...["大陆","香港","台湾","美国","日本","韩国"].map(i => ({ "name": i, "value": i }))
-            ] 
+                { "name": "全部", "value": "" },
+                ...["大陆", "香港", "台湾", "美国", "日本", "韩国"].map(i => ({ "name": i, "value": i }))
+            ]
         },
-        { 
-            "key": "year", 
-            "name": "年份", 
-            "value": generateYears('综艺') 
+        {
+            "key": "year",
+            "name": "年份",
+            "value": generateYears('综艺')
         }
     ]
 };
@@ -271,7 +271,7 @@ const json2vods = (arr) => (arr || []).map(i => ({
     vod_pic: i.vod_pic,
     vod_remarks: i.vod_remarks,
     type_name: i.vod_class ? `${i.type_name},${i.vod_class}` : i.type_name,
-    vod_year: i.vod_year
+    vod_year: i.vod_year.toString()
 }));
 
 // ============================================================
@@ -299,15 +299,15 @@ function wasmGetMem() {
 /**
  * 从 WASM 内存读取字节数组
  */
-function wasmReadBytes(p, l) { 
-    return wasmGetMem().subarray(p >>> 0, (p >>> 0) + l); 
+function wasmReadBytes(p, l) {
+    return wasmGetMem().subarray(p >>> 0, (p >>> 0) + l);
 }
 
 /**
  * 从 WASM 内存读取字符串
  */
-function wasmReadStr(p, l) { 
-    return wasmTextDec.decode(wasmGetMem().subarray(p >>> 0, (p >>> 0) + l)); 
+function wasmReadStr(p, l) {
+    return wasmTextDec.decode(wasmGetMem().subarray(p >>> 0, (p >>> 0) + l));
 }
 
 /**
@@ -315,8 +315,8 @@ function wasmReadStr(p, l) {
  */
 function wasmWriteBytes(data, malloc) {
     const p = malloc(data.length, 1) >>> 0;
-    wasmGetMem().set(data, p); 
-    wasmD = data.length; 
+    wasmGetMem().set(data, p);
+    wasmD = data.length;
     return p;
 }
 
@@ -328,16 +328,16 @@ function wasmWriteStr(s, malloc, realloc) {
         const e = wasmTextEnc.encode(s);
         const p = malloc(e.length, 1) >>> 0;
         wasmGetMem().subarray(p, p + e.length).set(e);
-        wasmD = e.length; 
+        wasmD = e.length;
         return p;
     }
     let n = s.length, p = malloc(n, 1) >>> 0;
-    const m = wasmGetMem(); 
+    const m = wasmGetMem();
     let o = 0;
-    for (; o < n; o++) { 
-        const c = s.charCodeAt(o); 
-        if (c > 127) break; 
-        m[p + o] = c; 
+    for (; o < n; o++) {
+        const c = s.charCodeAt(o);
+        if (c > 127) break;
+        m[p + o] = c;
     }
     if (o !== n) {
         const r = s.slice(o);
@@ -347,37 +347,37 @@ function wasmWriteStr(s, malloc, realloc) {
         o += res.written;
         p = realloc(p, n, o, 1) >>> 0;
     }
-    wasmD = o; 
+    wasmD = o;
     return p;
 }
 
 /**
  * WASM 外部引用表管理
  */
-function wasmExtAlloc(v) { 
-    const i = wasmExtCounter++; 
-    wasmExtTable.set(i, v); 
-    return i; 
+function wasmExtAlloc(v) {
+    const i = wasmExtCounter++;
+    wasmExtTable.set(i, v);
+    return i;
 }
 
-function wasmExtGet(i) { 
-    return wasmExtTable.get(i); 
+function wasmExtGet(i) {
+    return wasmExtTable.get(i);
 }
 
-function wasmExtDealloc(i) { 
-    const v = wasmExtTable.get(i); 
-    wasmExtTable.delete(i); 
-    return v; 
+function wasmExtDealloc(i) {
+    const v = wasmExtTable.get(i);
+    wasmExtTable.delete(i);
+    return v;
 }
 
 /**
  * WASM 异常捕获包装器
  */
 function wasmTryCatch(fn, args) {
-    try { 
-        return fn.apply(null, args); 
-    } catch(e) { 
-        wasmModule.exports.__wbindgen_exn_store(wasmExtAlloc(e)); 
+    try {
+        return fn.apply(null, args);
+    } catch (e) {
+        wasmModule.exports.__wbindgen_exn_store(wasmExtAlloc(e));
     }
 }
 
@@ -386,43 +386,45 @@ function wasmTryCatch(fn, args) {
  * 包含所有 WASM 模块需要的 JavaScript 绑定函数
  */
 function wasmBuildImports() {
-    return { "./web_app_wasm_bg.js": {
-        __wbg___wbindgen_is_function_0095a73b8b156f76: (e) => typeof wasmExtGet(e) === 'function',
-        __wbg___wbindgen_is_object_5ae8e5880f2c1fbd: (e) => { const r = wasmExtGet(e); return typeof r === 'object' && r !== null; },
-        __wbg___wbindgen_is_string_cd444516edc5b180: (e) => typeof wasmExtGet(e) === 'string',
-        __wbg___wbindgen_is_undefined_9e4d92534c42d778: (e) => wasmExtGet(e) === undefined,
-        __wbg___wbindgen_throw_be289d5034ed271b: (e, r) => { throw new Error(wasmReadStr(e, r)); },
-        __wbg_call_389efe28435a9388: function() { return wasmTryCatch((e, r) => wasmExtAlloc(wasmExtGet(e).call(wasmExtGet(r))), arguments); },
-        __wbg_call_4708e0c13bdc8e95: function() { return wasmTryCatch((e, r, n) => wasmExtAlloc(wasmExtGet(e).call(wasmExtGet(r), wasmExtGet(n))), arguments); },
-        __wbg_crypto_86f2631e91b51511: (e) => wasmExtAlloc(crypto),
-        __wbg_getRandomValues_b3f15fcbfabb0f8b: function() { return wasmTryCatch((e, r) => { crypto.randomFillSync(wasmExtGet(r)); }, arguments); },
-        __wbg_length_32ed9a279acd054c: (e) => wasmExtGet(e).length,
-        __wbg_msCrypto_d562bbe83e0d4b91: (e) => 0,
-        __wbg_new_no_args_1c7c842f08d00ebb: (e, r) => wasmExtAlloc(new Function(wasmReadStr(e, r))),
-        __wbg_new_with_length_a2c39cbe88fd8ff1: (e) => wasmExtAlloc(new Uint8Array(e >>> 0)),
-        __wbg_node_e1f24f89a7336c2e: (e) => wasmExtAlloc(process),
-        __wbg_now_a3af9a2f4bbaa4d1: () => Date.now(),
-        __wbg_process_3975fd6c72f520aa: (e) => wasmExtAlloc(process),
-        __wbg_prototypesetcall_bdcdcc5842e4d77d: (e, r, n) => { wasmReadBytes(e, r).set(wasmExtGet(n)); },
-        __wbg_randomFillSync_f8c153b79f285817: function() { return wasmTryCatch((e, r) => { crypto.randomFillSync(wasmExtGet(r)); }, arguments); },
-        __wbg_require_b74f47fc2d022fd6: function() { return wasmTryCatch(() => wasmExtAlloc(require), arguments); },
-        __wbg_static_accessor_GLOBAL_12837167ad935116: () => wasmExtAlloc(global),
-        __wbg_static_accessor_GLOBAL_THIS_e628e89ab3b1c95f: () => wasmExtAlloc(globalThis),
-        __wbg_static_accessor_SELF_a621d3dfbb60d0ce: () => 0,
-        __wbg_static_accessor_WINDOW_f8727f0cf888e0bd: () => 0,
-        __wbg_subarray_a96e1fef17ed23cb: (e, r, n) => wasmExtAlloc(wasmExtGet(e).subarray(r >>> 0, n >>> 0)),
-        __wbg_versions_4e31226f5e8dc909: (e) => wasmExtAlloc(process.versions),
-        __wbindgen_cast_0000000000000001: (e, r) => wasmExtAlloc(wasmReadBytes(e, r)),
-        __wbindgen_cast_0000000000000002: (e, r) => wasmExtAlloc(wasmReadStr(e, r)),
-        __wbindgen_init_externref_table: () => {
-            const t = wasmModule.exports.__wbindgen_externrefs;
-            if (t && t.grow) {
-                const b = t.grow(4);
-                t.set(0, undefined); t.set(b, undefined);
-                t.set(b + 1, null); t.set(b + 2, true); t.set(b + 3, false);
+    return {
+        "./web_app_wasm_bg.js": {
+            __wbg___wbindgen_is_function_0095a73b8b156f76: (e) => typeof wasmExtGet(e) === 'function',
+            __wbg___wbindgen_is_object_5ae8e5880f2c1fbd: (e) => { const r = wasmExtGet(e); return typeof r === 'object' && r !== null; },
+            __wbg___wbindgen_is_string_cd444516edc5b180: (e) => typeof wasmExtGet(e) === 'string',
+            __wbg___wbindgen_is_undefined_9e4d92534c42d778: (e) => wasmExtGet(e) === undefined,
+            __wbg___wbindgen_throw_be289d5034ed271b: (e, r) => { throw new Error(wasmReadStr(e, r)); },
+            __wbg_call_389efe28435a9388: function () { return wasmTryCatch((e, r) => wasmExtAlloc(wasmExtGet(e).call(wasmExtGet(r))), arguments); },
+            __wbg_call_4708e0c13bdc8e95: function () { return wasmTryCatch((e, r, n) => wasmExtAlloc(wasmExtGet(e).call(wasmExtGet(r), wasmExtGet(n))), arguments); },
+            __wbg_crypto_86f2631e91b51511: (e) => wasmExtAlloc(crypto),
+            __wbg_getRandomValues_b3f15fcbfabb0f8b: function () { return wasmTryCatch((e, r) => { crypto.randomFillSync(wasmExtGet(r)); }, arguments); },
+            __wbg_length_32ed9a279acd054c: (e) => wasmExtGet(e).length,
+            __wbg_msCrypto_d562bbe83e0d4b91: (e) => 0,
+            __wbg_new_no_args_1c7c842f08d00ebb: (e, r) => wasmExtAlloc(new Function(wasmReadStr(e, r))),
+            __wbg_new_with_length_a2c39cbe88fd8ff1: (e) => wasmExtAlloc(new Uint8Array(e >>> 0)),
+            __wbg_node_e1f24f89a7336c2e: (e) => wasmExtAlloc(process),
+            __wbg_now_a3af9a2f4bbaa4d1: () => Date.now(),
+            __wbg_process_3975fd6c72f520aa: (e) => wasmExtAlloc(process),
+            __wbg_prototypesetcall_bdcdcc5842e4d77d: (e, r, n) => { wasmReadBytes(e, r).set(wasmExtGet(n)); },
+            __wbg_randomFillSync_f8c153b79f285817: function () { return wasmTryCatch((e, r) => { crypto.randomFillSync(wasmExtGet(r)); }, arguments); },
+            __wbg_require_b74f47fc2d022fd6: function () { return wasmTryCatch(() => wasmExtAlloc(require), arguments); },
+            __wbg_static_accessor_GLOBAL_12837167ad935116: () => wasmExtAlloc(global),
+            __wbg_static_accessor_GLOBAL_THIS_e628e89ab3b1c95f: () => wasmExtAlloc(globalThis),
+            __wbg_static_accessor_SELF_a621d3dfbb60d0ce: () => 0,
+            __wbg_static_accessor_WINDOW_f8727f0cf888e0bd: () => 0,
+            __wbg_subarray_a96e1fef17ed23cb: (e, r, n) => wasmExtAlloc(wasmExtGet(e).subarray(r >>> 0, n >>> 0)),
+            __wbg_versions_4e31226f5e8dc909: (e) => wasmExtAlloc(process.versions),
+            __wbindgen_cast_0000000000000001: (e, r) => wasmExtAlloc(wasmReadBytes(e, r)),
+            __wbindgen_cast_0000000000000002: (e, r) => wasmExtAlloc(wasmReadStr(e, r)),
+            __wbindgen_init_externref_table: () => {
+                const t = wasmModule.exports.__wbindgen_externrefs;
+                if (t && t.grow) {
+                    const b = t.grow(4);
+                    t.set(0, undefined); t.set(b, undefined);
+                    t.set(b + 1, null); t.set(b + 2, true); t.set(b + 3, false);
+                }
             }
         }
-    }};
+    };
 }
 
 let wasmReady = false;
@@ -436,7 +438,7 @@ let wasmInitPromise = null;
 async function initWasm() {
     if (wasmReady) return true;
     if (wasmInitPromise) return wasmInitPromise;
-    
+
     wasmInitPromise = (async () => {
         try {
             // 尝试多个可能的 WASM 文件路径
@@ -445,18 +447,18 @@ async function initWasm() {
                 '/www/wwwroot/vodspider/vod/routes/qqqys.wasm',
                 '/tmp/qqqys.wasm'
             ];
-            
+
             let wasmBuf = null;
-            
+
             // 尝试从本地加载
             for (const p of possiblePaths) {
-                try { 
-                    wasmBuf = fs.readFileSync(p); 
+                try {
+                    wasmBuf = fs.readFileSync(p);
                     logInfo(`WASM 文件从本地加载: ${p}`);
-                    break; 
-                } catch(e) {}
+                    break;
+                } catch (e) { }
             }
-            
+
             // 如果本地没有，从远程下载
             if (!wasmBuf) {
                 logInfo('本地未找到 WASM 文件，开始从远程下载...');
@@ -467,10 +469,10 @@ async function initWasm() {
                         res.on('end', () => {
                             const buf = Buffer.concat(chunks);
                             // 保存到本地缓存
-                            try { 
-                                fs.writeFileSync(path.join(__dirname, 'qqqys.wasm'), buf); 
+                            try {
+                                fs.writeFileSync(path.join(__dirname, 'qqqys.wasm'), buf);
                                 logInfo('WASM 文件已缓存到本地');
-                            } catch(e) {
+                            } catch (e) {
                                 logError('WASM 文件缓存失败', e);
                             }
                             resolve(buf);
@@ -483,12 +485,12 @@ async function initWasm() {
             const { instance } = await WebAssembly.instantiate(wasmBuf, wasmBuildImports());
             wasmModule = instance;
             wasmMemView = null;
-            
+
             // 启动 WASM 模块
             if (wasmModule.exports.__wbindgen_start) {
                 wasmModule.exports.__wbindgen_start();
             }
-            
+
             wasmReady = true;
             logInfo('WASM 解码模块加载成功');
             return true;
@@ -498,7 +500,7 @@ async function initWasm() {
             return false;
         }
     })();
-    
+
     return wasmInitPromise;
 }
 
@@ -510,9 +512,9 @@ async function initWasm() {
  */
 function wasmCreateDecodeRequest(url, vodFrom) {
     const e = wasmModule.exports;
-    const up = wasmWriteStr(url, e.__wbindgen_malloc, e.__wbindgen_realloc); 
+    const up = wasmWriteStr(url, e.__wbindgen_malloc, e.__wbindgen_realloc);
     const ul = wasmD;
-    const fp = wasmWriteStr(vodFrom, e.__wbindgen_malloc, e.__wbindgen_realloc); 
+    const fp = wasmWriteStr(vodFrom, e.__wbindgen_malloc, e.__wbindgen_realloc);
     const fl = wasmD;
     const r = e.create_decode_request(up, ul, fp, fl);
     const data = wasmGetMem().slice(r[0], r[0] + r[1]);
@@ -527,12 +529,12 @@ function wasmCreateDecodeRequest(url, vodFrom) {
  */
 function wasmParseDecodeResponse(body) {
     const e = wasmModule.exports;
-    const bp = wasmWriteBytes(body, e.__wbindgen_malloc); 
+    const bp = wasmWriteBytes(body, e.__wbindgen_malloc);
     const bl = wasmD;
     const r = e.parse_decode_response(bp, bl);
-    
+
     if (r[2]) throw wasmExtDealloc(r[1]) || new Error('parse failed');
-    
+
     const ptr = r[0];
     const code = e.decoderesult_code(ptr);
     const dd = e.decoderesult_data(ptr);
@@ -540,7 +542,7 @@ function wasmParseDecodeResponse(body) {
     const dm = e.decoderesult_msg(ptr);
     const msg = dm[0] ? wasmReadStr(dm[0], dm[1]) : '';
     e.__wbg_decoderesult_free(ptr, 0);
-    
+
     return { code, data, msg };
 }
 
@@ -552,30 +554,30 @@ function wasmParseDecodeResponse(body) {
 function wasmGetSignatureHeaders() {
     const e = wasmModule.exports;
     const r = e.get_signature_headers();
-    
-    const aid = e.signatureheaders_aid(r); 
+
+    const aid = e.signatureheaders_aid(r);
     const aidStr = aid[0] ? wasmReadStr(aid[0], aid[1]) : '';
-    
-    const ave = e.signatureheaders_ave(r); 
+
+    const ave = e.signatureheaders_ave(r);
     const aveStr = ave[0] ? wasmReadStr(ave[0], ave[1]) : '';
-    
-    const nonc = e.signatureheaders_nonc(r); 
+
+    const nonc = e.signatureheaders_nonc(r);
     const noncStr = nonc[0] ? wasmReadStr(nonc[0], nonc[1]) : '';
-    
-    const sign = e.signatureheaders_sign(r); 
+
+    const sign = e.signatureheaders_sign(r);
     const signStr = sign[0] ? wasmReadStr(sign[0], sign[1]) : '';
-    
-    const time = e.signatureheaders_time(r); 
+
+    const time = e.signatureheaders_time(r);
     const timeStr = time[0] ? wasmReadStr(time[0], time[1]) : '';
-    
+
     e.__wbg_signatureheaders_free(r, 0);
-    
-    return { 
-        'X-App-Id': aidStr, 
-        'X-App-Ve': aveStr, 
-        'X-Nonc': noncStr, 
-        'X-Sign': signStr, 
-        'X-Time': timeStr 
+
+    return {
+        'X-App-Id': aidStr,
+        'X-App-Ve': aveStr,
+        'X-Nonc': noncStr,
+        'X-Sign': signStr,
+        'X-Time': timeStr
     };
 }
 
@@ -590,8 +592,8 @@ async function postProtobuf(url, data, extraHeaders = {}) {
     return new Promise((resolve, reject) => {
         const u = new URL(url);
         const req = https.request({
-            hostname: u.hostname, 
-            path: u.pathname, 
+            hostname: u.hostname,
+            path: u.pathname,
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-protobuf',
@@ -638,36 +640,36 @@ async function decodeEncryptedUrl(rawUrl, vodFrom) {
             return null;
         }
     }
-    
+
     try {
         // 1. 创建解码请求数据
         const reqData = wasmCreateDecodeRequest(rawUrl, vodFrom);
-        
+
         // 2. 获取签名请求头
         const sigHeaders = wasmGetSignatureHeaders();
-        
+
         // 3. 发送 Protobuf 请求
         const resp = await postProtobuf(
             `${config.host}/api.php/web/decode/url`,
             reqData,
             sigHeaders
         );
-        
+
         // 4. 检查响应状态
         if (resp.status !== 200) {
             logError('解码请求失败', new Error(`HTTP ${resp.status}`));
             return null;
         }
-        
+
         // 5. 解析响应数据
         const result = wasmParseDecodeResponse(new Uint8Array(resp.body));
-        
+
         // 6. 验证解码结果
         if (result.code === 1 && result.data && result.data.startsWith('http')) {
             logInfo(`解码成功: ${vodFrom} -> ${result.data.substring(0, 80)}...`);
             return result.data;
         }
-        
+
         logError('解码失败', new Error(`code=${result.code}, msg=${result.msg}`));
         return null;
     } catch (e) {
@@ -698,9 +700,9 @@ function preprocessTitle(title) {
  * @returns {number|string} 阿拉伯数字或原值
  */
 function chineseToArabic(cn) {
-    const map = { 
-        '零': 0, '一': 1, '二': 2, '三': 3, '四': 4, 
-        '五': 5, '六': 6, '七': 7, '八': 8, '九': 9, '十': 10 
+    const map = {
+        '零': 0, '一': 1, '二': 2, '三': 3, '四': 4,
+        '五': 5, '六': 6, '七': 7, '八': 8, '九': 9, '十': 10
     };
     if (!isNaN(cn)) return parseInt(cn);
     if (cn.length === 1) return map[cn] || cn;
@@ -751,7 +753,7 @@ function extractEpisode(title) {
                 const n = parseInt(num);
                 return n > 0 && n < 300 && !["720", "480", "264", "265"].includes(num);
             });
-        
+
         if (candidates.length > 0) {
             // 优先取 1-99 之间的
             const normalEp = candidates.find(n => parseInt(n) < 100);
@@ -976,18 +978,21 @@ async function home(params) {
         const list = [];
         // 提取分类列表
         const categories = res.data.data.categories || [];
-        const classList = categories.map(i => ({ 
-            type_id: i.type_name, 
-            type_name: i.type_name 
+        const classList = categories.map(i => ({
+            type_id: i.type_name,
+            type_name: i.type_name
         }));
         categories.forEach(i => {
             i.videos.forEach(k => {
+                k.vod_id = k.vod_id.toString();
                 list.push(k);
             });
         });
-        
+
         logInfo(`分类获取完成，共 ${classList.length} 个`);
-        
+
+        logInfo(`首页响应：${JSON.stringify(list)}`);
+
         return {
             class: classList,
             filters: filterData,
@@ -996,7 +1001,7 @@ async function home(params) {
     } catch (e) {
         logError('首页获取失败', e);
         // 返回默认分类
-        return { 
+        return {
             class: [
                 { type_id: '电影', type_name: '电影' },
                 { type_id: '剧集', type_name: '剧集' },
@@ -1020,7 +1025,7 @@ async function category(params) {
 
     try {
         const PAGE_SIZE = 50;
-        
+
         // 构建请求 URL
         let url = `${config.host}/api.php/web/filter/vod?type_name=${encodeURIComponent(categoryId)}&page=${pg}&limit=${PAGE_SIZE}`;
 
@@ -1044,23 +1049,27 @@ async function category(params) {
         // 发送请求
         const res = await apiGet(url);
         const items = res.data.data || [];
-        
+
         // API 的 pageCount 不可靠，根据返回数量判断是否有下一页
         const hasMore = items.length >= PAGE_SIZE;
-        
+
         logInfo(`获取到 ${items.length} 个视频`);
-        
+
+        const list = json2vods(items);
+
+        logInfo(`list: ${JSON.stringify(list)}`);
+
         return {
-            list: json2vods(items),
+            list: list,
             page: pg,
             pagecount: hasMore ? pg + 1 : pg
         };
     } catch (e) {
         logError('分类请求失败', e);
-        return { 
-            list: [], 
-            page: pg, 
-            pagecount: 0 
+        return {
+            list: [],
+            page: pg,
+            pagecount: 0
         };
     }
 }
@@ -1167,9 +1176,9 @@ async function detail(params) {
         if (scrapeCandidates.length > 0) {
             try {
                 const scrapingResult = await OmniBox.processScraping(
-                    videoIdForScrape, 
-                    vod.vod_name || "", 
-                    vod.vod_name || "", 
+                    videoIdForScrape,
+                    vod.vod_name || "",
+                    vod.vod_name || "",
                     scrapeCandidates
                 );
                 logInfo(`刮削处理完成: ${JSON.stringify(scrapingResult || {}).substring(0, 200)}`);
@@ -1179,10 +1188,10 @@ async function detail(params) {
                 scrapeData = metadata?.scrapeData || null;
                 videoMappings = metadata?.videoMappings || [];
                 scrapeType = metadata?.scrapeType || "";
-                logInfo(`刮削元数据读取完成`, { 
-                    hasScrapeData: !!scrapeData, 
-                    mappingCount: videoMappings.length, 
-                    scrapeType 
+                logInfo(`刮削元数据读取完成`, {
+                    hasScrapeData: !!scrapeData,
+                    mappingCount: videoMappings.length,
+                    scrapeType
                 });
             } catch (error) {
                 logError("刮削处理失败", error);
@@ -1194,7 +1203,7 @@ async function detail(params) {
             for (const ep of source.episodes || []) {
                 const mapping = videoMappings.find((m) => m?.fileId === ep._fid);
                 if (!mapping) continue;
-                
+
                 const oldName = ep.name;
                 const newName = buildScrapedEpisodeName(scrapeData, mapping, oldName);
                 if (newName && newName !== oldName) {
@@ -1242,7 +1251,7 @@ async function detail(params) {
             if (scrapeData.releaseDate) {
                 vod.vod_year = String(scrapeData.releaseDate).substring(0, 4) || vod.vod_year;
             }
-            
+
             // 演员信息
             const actors = (scrapeData.credits?.cast || [])
                 .slice(0, 5)
@@ -1252,7 +1261,7 @@ async function detail(params) {
             if (actors) {
                 vod.vod_actor = actors;
             }
-            
+
             // 导演信息
             const directors = (scrapeData.credits?.crew || [])
                 .filter((c) => c?.job === "Director" || c?.department === "Directing")
@@ -1290,20 +1299,20 @@ async function search(params) {
         const res = await apiGet(`${config.host}/api.php/web/search/index?wd=${encodeURIComponent(wd)}&page=${pg}&limit=50`);
         const items = res.data.data || [];
         const hasMore = items.length >= 50;
-        
+
         logInfo(`搜索到 ${items.length} 个结果`);
-        
-        return { 
-            list: json2vods(items), 
-            page: pg, 
-            pagecount: hasMore ? pg + 1 : pg 
+
+        return {
+            list: json2vods(items),
+            page: pg,
+            pagecount: hasMore ? pg + 1 : pg
         };
     } catch (e) {
         logError('搜索失败', e);
-        return { 
-            list: [], 
-            page: pg, 
-            pagecount: 0 
+        return {
+            list: [],
+            page: pg,
+            pagecount: 0
         };
     }
 }
@@ -1338,7 +1347,7 @@ async function play(params) {
         const videoIdFromParam = params.vodId ? String(params.vodId) : "";
         const videoIdFromMeta = playMeta?.sid ? String(playMeta.sid) : "";
         const videoIdForScrape = videoIdFromParam || videoIdFromMeta;
-        
+
         if (videoIdForScrape) {
             const metadata = await OmniBox.getScrapeMetadata(videoIdForScrape);
             if (metadata && metadata.scrapeData) {
@@ -1394,10 +1403,10 @@ async function play(params) {
             } else {
                 logError('解码失败', new Error(`无法解码 ${play_from}: ${raw_url.substring(0, 40)}...`));
                 // 解码失败，返回空地址
-                return { 
-                    urls: [{ name: "3Q影视", url: "" }], 
-                    parse: 0, 
-                    header: PLAY_HEADERS 
+                return {
+                    urls: [{ name: "3Q影视", url: "" }],
+                    parse: 0,
+                    header: PLAY_HEADERS
                 };
             }
         }
